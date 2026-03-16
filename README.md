@@ -1,16 +1,37 @@
-# React + Vite
+# ttt-mastermind
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
+ttt-mastermind is a web-based Tic-Tac-Toe game where the player competes against a near-unbeatable AI opponent.
 
-Currently, two official plugins are available:
+## Product Vision
+The goal is to create a clean, responsive, and engaging single-player game with a strong AI based on minimax and alpha-beta pruning.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Team Roles
+- Sultan - Developer, Game Engine Functionality, simulated client when needed
+- Sasha - Developer, UI/UX Design and Structure
+- Irina - Scrum Master, Scrum facilitation and final documentation
+- Veena - Product Owner, backlog management and user stories
 
-## React Compiler
+## Scrum Workflow
+The project is developed using Scrum with 2 sprints:
+- Sprint 1: MVP (UI + core game logic)
+- Sprint 2: advanced AI + additional features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
+- React
+- ThreeJS
+- JavaScript / TypeScript
 
-## Expanding the ESLint configuration
+## Repository Structure
+- `docs/prd.md`
+- `docs/scrum-process.md`
+- `docs/sprint1.md`
+- `docs/sprint2.md`
+- `docs/sprint-review.md`
+- `docs/retrospective.md`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Documentation
+See the `docs/` folder for detailed Scrum and project documentation.
+
+## PRD
+The full Product Requirements Document is available in [docs/prd.md](docs/prd.md).
