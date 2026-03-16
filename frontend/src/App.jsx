@@ -10,6 +10,7 @@ export default function App() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [turn, setTurn] = useState("player");
   const [theme, setTheme] = useState("dark");
+  const [focusCell, setFocusCell] = useState(null);
 
   const winner = checkWinner(board);
 
@@ -64,10 +65,16 @@ export default function App() {
         background: activeTheme.background,
       }}
     >
-      <GameScene board={board} onMove={handlePlayerMove} theme={activeTheme} />
+      <GameScene
+        board={board}
+        onMove={handlePlayerMove}
+        theme={activeTheme}
+        focus={focusCell}
+        setFocus={setFocusCell}
+      />
 
       <div className="statusPanel">{statusText}</div>
-      
+
       <button className="uiButton resetButton" onClick={resetGame}>
         Reset
       </button>
