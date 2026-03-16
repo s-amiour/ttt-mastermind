@@ -1,21 +1,32 @@
 # Sprint Retrospective
 
 ## Sprint 1
+
 ### What went well
-TBD
+- Team roles were clearly distributed.
+- Communication between team members was effective.
+- The MVP was delivered within the sprint timebox.
 
 ### What did not go well
-TBD
+- AI complexity required more estimation than expected.
+- More integration testing could have been done before the review.
 
 ### Improvements for next sprint
-TBD
+- Validate AI behavior earlier.
+- Increase testing before the Sprint Review.
+- Keep communication frequent during implementation.
 
 ## Sprint 2
+
 ### What went well
-TBD
+- Remaining features were completed successfully.
+- Team coordination improved during the second sprint.
+- GitHub collaboration and release preparation worked smoothly.
 
 ### What did not go well
-TBD
+- Some advanced features required tighter prioritization.
+- More time could have been allocated for final polish.
 
 ### Improvements
-TBD
+- Prioritize high-value features earlier.
+- Reserve more time for validation and presentation polish.
