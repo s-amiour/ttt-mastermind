@@ -8,15 +8,15 @@ export default function Board({ board, onMove, theme, setFocus }) {
   let scale = 1;
 
   if (size.width < 420) {
-    scale = 0.62;
+    scale = 0.74;
   } else if (size.width < 640) {
-    scale = 0.76;
+    scale = 0.86;
   } else if (size.width < 900) {
     scale = 0.9;
   }
 
   if (size.height < 760) {
-    scale *= 0.92;
+    scale *= 0.96;
   }
 
   return (

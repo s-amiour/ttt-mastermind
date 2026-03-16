@@ -125,6 +125,7 @@ export default function App() {
         "--accent-x": activeTheme.xColor,
         "--accent-o": activeTheme.oColor,
       }}
+      data-theme={theme}
     >
       <div className="backgroundGlow backgroundGlowPrimary" />
       <div className="backgroundGlow backgroundGlowSecondary" />
