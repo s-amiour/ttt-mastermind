@@ -1,121 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from "react";
+import GameScene from "./scene/GameScene";
+import { getComputerMove } from "./api/ai";
+import { checkWinner } from "./game/checkWinner";
+import { themes } from "./styles/theme";
 
-function App() {
-  const [count, setCount] = useState(0)
+import "./styles/ui.css";
+
+export default function App() {
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [turn, setTurn] = useState("player");
+  const [theme, setTheme] = useState("dark");
+
+  const winner = checkWinner(board);
+
+  let statusText;
+
+  if (winner === "X") statusText = "You win!";
+  else if (winner === "O") statusText = "Computer wins!";
+  else if (turn === "player") statusText = "Your turn";
+  else statusText = "Computer thinking...";
+
+  function handlePlayerMove(index) {
+    if (board[index] !== null) return;
+    if (turn !== "player") return;
+    if (winner) return;
+
+    const newBoard = [...board];
+    newBoard[index] = "X";
+
+    setBoard(newBoard);
+    setTurn("computer");
+  }
+
+  useEffect(() => {
+    async function computerTurn() {
+      if (turn === "computer" && !winner) {
+        const move = await getComputerMove(board);
+
+        const newBoard = [...board];
+        newBoard[move] = "O";
+
+        setTimeout(() => {
+          setBoard(newBoard);
+          setTurn("player");
+        }, 500);
+      }
+    }
+
+    computerTurn();
+  }, [turn]);
+
+  function resetGame() {
+    setBoard(Array(9).fill(null));
+    setTurn("player");
+  }
+
+  const activeTheme = themes[theme];
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div
+      style={{
+        height: "100vh",
+        background: activeTheme.background,
+      }}
+    >
+      <GameScene board={board} onMove={handlePlayerMove} theme={activeTheme} />
 
-      <div className="ticks"></div>
+      <div className="statusPanel">{statusText}</div>
+      
+      <button className="uiButton resetButton" onClick={resetGame}>
+        Reset
+      </button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <button
+        className="uiButton themeButton"
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      >
+        Theme
+      </button>
+    </div>
+  );
 }
-
-export default App
