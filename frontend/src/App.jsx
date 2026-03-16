@@ -1,187 +1,185 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import GameScene from "./scene/GameScene";
-import { getComputerMove } from "./api/ai";
-import { getGameState } from "./game/checkWinner";
 import { themes } from "./styles/theme";
 
 import "./styles/ui.css";
 
+// ==========================================
+// 1. MINIMAX & GAME LOGIC (Adapted for 1D Array)
+// ==========================================
+
+const winPatterns = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+  [0, 3, 6], [1, 4, 7], [2, 5, 8], // Cols
+  [0, 4, 8], [2, 4, 6]             // Diagonals
+];
+
+function checkWinner(board, player) {
+  return winPatterns.some(pattern => 
+    pattern.every(index => board[index] === player)
+  );
+}
+
+function isDraw(board) {
+  return board.every(cell => cell !== null);
+}
+
+// Alpha-Beta Pruning Minimax
+function minimax(board, depth, alpha, beta, isMaximizing, aiMark, humanMark) {
+  if (checkWinner(board, aiMark)) return { score: 10 - depth }; // AI wins
+  if (checkWinner(board, humanMark)) return { score: depth - 10 }; // Human wins
+  if (isDraw(board)) return { score: 0 }; // Draw
+
+  let bestMove = -1;
+
+  if (isMaximizing) {
+    let maxEval = -Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === null) {
+        board[i] = aiMark;
+        let evalResult = minimax(board, depth + 1, alpha, beta, false, aiMark, humanMark).score;
+        board[i] = null; // Undo move
+        
+        if (evalResult > maxEval) {
+          maxEval = evalResult;
+          bestMove = i;
+        }
+        alpha = Math.max(alpha, evalResult);
+        if (beta <= alpha) break; // Prune
+      }
+    }
+    return { score: maxEval, index: bestMove };
+  } else {
+    let minEval = Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === null) {
+        board[i] = humanMark;
+        let evalResult = minimax(board, depth + 1, alpha, beta, true, aiMark, humanMark).score;
+        board[i] = null; // Undo move
+        
+        if (evalResult < minEval) {
+          minEval = evalResult;
+          bestMove = i;
+        }
+        beta = Math.min(beta, evalResult);
+        if (beta <= alpha) break; // Prune
+      }
+    }
+    return { score: minEval, index: bestMove };
+  }
+}
+
+
+// ==========================================
+// 2. MAIN APP COMPONENT
+// ==========================================
+
+
 export default function App() {
   const [board, setBoard] = useState(Array(9).fill(null));
-  const [turn, setTurn] = useState("player");
+  const [firstMove, setFirstMove] = useState("HUMAN");
+  const [turn, setTurn] = useState("HUMAN");
   const [theme, setTheme] = useState("dark");
-  const [focusCell, setFocusCell] = useState(null);
-  const [aiError, setAiError] = useState(null);
-  const pendingTimeoutRef = useRef(null);
-  const requestIdRef = useRef(0);
 
-  const { winner, isDraw } = getGameState(board);
-  const gameOver = winner !== null || isDraw;
-  const isComputerTurn = turn === "computer" && !gameOver && !aiError;
+  // Determine who is X and who is O based on who started
+  const humanMark = firstMove === "HUMAN" ? "X" : "O";
+  const aiMark = firstMove === "AI" ? "X" : "O";
 
-  let statusText;
-  let statusClassName = "statusPanel";
+  // const winner = checkWinner(board);
 
-  if (aiError) {
-    statusText = aiError;
-    statusClassName = "statusPanel statusError";
-  } else if (winner === "X") {
-    statusText = "You win!";
-  } else if (winner === "O") {
-    statusText = "Computer wins!";
-  } else if (isDraw) {
-    statusText = "Draw game";
-  } else if (turn === "player") {
-    statusText = "Your turn";
-  } else {
-    statusText = "Computer thinking...";
-    statusClassName = "statusPanel statusLoading";
-  }
+  // let statusText;
+
+  // if (winner === "X") statusText = "You win!";
+  // else if (winner === "O") statusText = "Computer wins!";
+  // else if (turn === "player") statusText = "Your turn";
+  // else statusText = "Computer thinking...";
+
+  // Check Game Status synchronously during render
+  let gameResult = null;
+  if (checkWinner(board, humanMark)) gameResult = "win";
+  else if (checkWinner(board, aiMark)) gameResult = "loss";
+  else if (isDraw(board)) gameResult = "draw";
+
+  // AI Turn Effect
+  useEffect(() => {
+    if (turn === "AI" && !gameResult) {
+      // Small delay so the AI doesn't feel instantly robotic
+      const timer = setTimeout(() => {
+        const boardCopy = [...board]; // Copy board so we don't mutate state directly
+        const move = minimax(boardCopy, 0, -Infinity, Infinity, true, aiMark, humanMark);
+
+        if (move.index !== -1) {
+          const newBoard = [...board];
+          newBoard[move.index] = aiMark;
+          setBoard(newBoard);
+          setTurn("HUMAN");
+        }
+      }, 1); 
+      return () => clearTimeout(timer);
+    }
+  }, [turn, board, gameResult, aiMark, humanMark]);
 
   function handlePlayerMove(index) {
-    if (board[index] !== null) return;
-    if (turn !== "player") return;
-    if (gameOver) return;
+    // Prevent move if cell is taken, it's not player's turn, or game is over
+    if (board[index] !== null || turn !== "HUMAN" || gameResult) return;
 
     const newBoard = [...board];
-    newBoard[index] = "X";
-
-    setAiError(null);
+    newBoard[index] = humanMark;
     setBoard(newBoard);
-    setTurn("computer");
+    setTurn("AI");
   }
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function computerTurn() {
-      if (turn === "computer" && !gameOver) {
-        try {
-          const requestId = requestIdRef.current + 1;
-          requestIdRef.current = requestId;
-          const move = await getComputerMove(board, {
-            signal: controller.signal,
-          });
-
-          const newBoard = [...board];
-          newBoard[move] = "O";
-
-          pendingTimeoutRef.current = setTimeout(() => {
-            if (requestIdRef.current !== requestId) return;
-            setBoard(newBoard);
-            setTurn("player");
-            pendingTimeoutRef.current = null;
-          }, 500);
-        } catch (error) {
-          if (error.name === "AbortError") return;
-
-          setAiError(error.message);
-          setTurn("player");
-        }
-      }
-    }
-
-    computerTurn();
-
-    return () => {
-      controller.abort();
-
-      if (pendingTimeoutRef.current) {
-        clearTimeout(pendingTimeoutRef.current);
-        pendingTimeoutRef.current = null;
-      }
-    };
-  }, [board, gameOver, turn]);
-
   function resetGame() {
-    requestIdRef.current += 1;
-
-    if (pendingTimeoutRef.current) {
-      clearTimeout(pendingTimeoutRef.current);
-      pendingTimeoutRef.current = null;
-    }
-
+    // Swap who starts the next game
+    const nextFirst = firstMove === "AI" ? "HUMAN" : "AI";
+    setFirstMove(nextFirst);
+    setTurn(nextFirst); 
     setBoard(Array(9).fill(null));
-    setTurn("player");
-    setAiError(null);
   }
 
   const activeTheme = themes[theme];
 
+  // Modal styling mapping matching your vanilla logic
+  const modalUI = {
+    win: { bg: "#198754", text: "You Win!" },
+    loss: { bg: "#dc3545", text: "You Lose!" },
+    draw: { bg: "#fd7e14", text: "Draw!" }
+  };
+
   return (
     <div
-      className="appShell"
       style={{
         height: "100vh",
         background: activeTheme.background,
-        color: activeTheme.text,
-        "--surface": activeTheme.surface,
-        "--surface-strong": activeTheme.surfaceStrong,
-        "--surface-border": activeTheme.surfaceBorder,
-        "--text-color": activeTheme.text,
-        "--text-muted": activeTheme.textMuted,
-        "--glow-color": activeTheme.glow,
-        "--glow-alt": activeTheme.glowAlt,
-        "--accent-x": activeTheme.xColor,
-        "--accent-o": activeTheme.oColor,
+        position: "relative"
       }}
-      data-theme={theme}
     >
-      <div className="backgroundGlow backgroundGlowPrimary" />
-      <div className="backgroundGlow backgroundGlowSecondary" />
+      {/* <h1 class="title">Tic-Tac-Toe</h1> */}
 
-      <header className="topBar">
-        <div className="brandBlock">
-          <p className="eyebrow">3D strategy playground</p>
-          <h1>Tic-Tac-Toe Mastermind</h1>
-          <p className="subtitle">Play the board, read the rhythm, outsmart the machine.</p>
-        </div>
+      <GameScene board={board} onMove={handlePlayerMove} theme={activeTheme} />
 
-        <div className="controlGroup">
-          <button className="uiButton resetButton" onClick={resetGame}>
-            New Game
-          </button>
+      {/* <div className="statusPanel">{statusText}</div> */}
+      
+      <button className="uiButton resetButton" onClick={resetGame}>
+        Reset
+      </button>
 
-          <button
-            className="uiButton themeButton"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            disabled={isComputerTurn}
-          >
-            {theme === "dark" ? "Light Mode" : "Dark Mode"}
-          </button>
-        </div>
-      </header>
+      <button
+        className="uiButton themeButton"
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      >
+        Theme
+      </button>
 
-      <section className="sceneFrame">
-        <div className="sceneHalo" />
-
-        <div className="statusWrap">
-          <div className={statusClassName} aria-live="polite">
-            {statusText}
+      {/* React-driven Modal replacing window.onclick and querySelectors */}
+      {gameResult && (
+        <div 
+          className="modal" onClick={resetGame}>
+          <div className="modal-content" style={{ backgroundColor: modalUI[gameResult].bg }}>
+            {modalUI[gameResult].text}
           </div>
         </div>
-
-        <div className="sceneViewport">
-          <GameScene
-            board={board}
-            onMove={handlePlayerMove}
-            theme={activeTheme}
-            focus={focusCell}
-            setFocus={setFocusCell}
-          />
-        </div>
-
-        <div className="legend">
-          <span className="legendItem">
-            <span className="legendDot legendDotX" />
-            You
-          </span>
-          <span className="legendItem">
-            <span className="legendDot legendDotO" />
-            Computer
-          </span>
-        </div>
-      </section>
+      )}
     </div>
   );
 }

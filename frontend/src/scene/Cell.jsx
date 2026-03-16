@@ -1,9 +1,8 @@
 import { useState } from "react";
 import XMark from "./XMark";
 import OMark from "./OMark";
-import { isTouchDevice } from "../utils/device";
 
-export default function Cell({ index, value, onClick, theme, setFocus }) {
+export default function Cell({ index, value, onClick, theme }) {
   const [hovered, setHovered] = useState(false);
 
   const spacing = 2;
@@ -13,8 +12,6 @@ export default function Cell({ index, value, onClick, theme, setFocus }) {
 
   const x = (col - 1) * spacing;
   const y = (1 - row) * spacing;
-
-  const touchDevice = isTouchDevice();
 
   return (
     <group position={[x, y, 0]}>
@@ -28,18 +25,8 @@ export default function Cell({ index, value, onClick, theme, setFocus }) {
 
       {/* Clickable area */}
       <mesh
-        onPointerEnter={() => {
-          if (!touchDevice) {
-            setHovered(true);
-            setFocus?.([x, y]);
-          }
-        }}
-        onPointerLeave={() => {
-          if (!touchDevice) {
-            setHovered(false);
-            setFocus?.(null);
-          }
-        }}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
         onClick={(e) => {
           e.stopPropagation();
           onClick(index);
