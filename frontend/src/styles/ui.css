@@ -1,0 +1,498 @@
+.appShell {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  padding: clamp(12px, 2vw, 28px);
+  flex-direction: column;
+  color: var(--text-color);
+  isolation: isolate;
+}
+
+.backgroundGlow {
+  position: absolute;
+  inset: auto;
+  width: 34rem;
+  height: 34rem;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: blur(30px);
+  opacity: 0.9;
+}
+
+.backgroundGlowPrimary {
+  top: -8rem;
+  left: -6rem;
+  background: var(--glow-color);
+}
+
+.backgroundGlowSecondary {
+  right: -4rem;
+  bottom: 4rem;
+  background: var(--glow-alt);
+}
+
+.topBar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(16px, 2vw, 24px);
+}
+
+.brandBlock {
+  max-width: 34rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.brandBlock h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 6vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.subtitle {
+  margin: 0.85rem 0 0;
+  max-width: 26rem;
+  font-size: clamp(0.98rem, 2vw, 1.1rem);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.controlGroup {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.uiButton {
+  position: relative;
+  overflow: hidden;
+  min-height: 46px;
+  padding: 0.85rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border);
+  color: var(--text-color);
+  background: color-mix(in srgb, var(--surface-strong) 78%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 18px 40px rgba(6, 10, 18, 0.14);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+.uiButton:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent-x) 48%, var(--surface-border));
+  background: color-mix(in srgb, var(--surface-strong) 90%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 20px 44px rgba(6, 10, 18, 0.2);
+}
+
+.uiButton:active {
+  transform: translateY(1px);
+}
+
+.uiButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+}
+
+.uiButton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.32) 45%,
+    transparent 100%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.6s ease;
+}
+
+.uiButton:hover::after {
+  transform: translateX(130%);
+}
+
+.sceneFrame {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  margin-top: clamp(12px, 2vh, 22px);
+  min-height: 0;
+  border-radius: 32px;
+  border: 1px solid var(--surface-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 18%),
+    var(--surface);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 28px 80px rgba(4, 8, 15, 0.2);
+  overflow: hidden;
+}
+
+.sceneHalo {
+  position: absolute;
+  width: min(60vw, 38rem);
+  height: min(60vw, 38rem);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, var(--glow-color) 0%, transparent 62%),
+    radial-gradient(circle at 68% 34%, var(--glow-alt) 0%, transparent 44%);
+  filter: blur(12px);
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.statusWrap {
+  position: absolute;
+  top: clamp(10px, 1.5vw, 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: min(24rem, calc(100% - 24px));
+  pointer-events: none;
+}
+
+.statusPanel {
+  min-width: 13rem;
+  padding: 0.72rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border);
+  background: color-mix(in srgb, var(--surface-strong) 84%, transparent);
+  color: var(--text-color);
+  text-align: center;
+  font-size: clamp(0.92rem, 2vw, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 14px 30px rgba(8, 12, 19, 0.18);
+}
+
+.statusLoading {
+  border-color: color-mix(in srgb, var(--accent-o) 35%, var(--surface-border));
+  animation: statusPulse 1.4s ease-in-out infinite;
+}
+
+.statusError {
+  border-color: rgba(255, 120, 120, 0.35);
+  background: rgba(160, 20, 20, 0.18);
+}
+
+.sceneViewport {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.legend {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(10px, 1.8vw, 22px);
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 2;
+}
+
+.appShell[data-theme="light"] .backgroundGlow {
+  opacity: 0.55;
+  filter: blur(40px);
+}
+
+.appShell[data-theme="light"] .sceneFrame {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.46) 24%, rgba(255, 255, 255, 0.28) 100%),
+    var(--surface);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 24px 60px rgba(83, 106, 141, 0.16);
+}
+
+.appShell[data-theme="light"] .brandBlock h1 {
+  color: #101a2c;
+}
+
+.appShell[data-theme="light"] .subtitle,
+.appShell[data-theme="light"] .eyebrow,
+.appShell[data-theme="light"] .legendItem {
+  color: rgba(20, 32, 51, 0.76);
+}
+
+.appShell[data-theme="light"] .uiButton {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 248, 255, 0.88));
+  border-color: rgba(40, 58, 88, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 14px 30px rgba(94, 120, 160, 0.16);
+}
+
+.appShell[data-theme="light"] .uiButton:hover {
+  border-color: color-mix(in srgb, var(--accent-o) 32%, rgba(40, 58, 88, 0.16));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(240, 246, 255, 0.96));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 16px 34px rgba(94, 120, 160, 0.2);
+}
+
+.appShell[data-theme="light"] .statusPanel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(242, 246, 255, 0.9));
+  border-color: rgba(40, 58, 88, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 12px 28px rgba(94, 120, 160, 0.14);
+}
+
+.appShell[data-theme="light"] .statusLoading {
+  border-color: color-mix(in srgb, var(--accent-o) 28%, rgba(40, 58, 88, 0.14));
+}
+
+.appShell[data-theme="light"] .legend {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(242, 246, 255, 0.84));
+  border-color: rgba(40, 58, 88, 0.14);
+  box-shadow: 0 12px 28px rgba(94, 120, 160, 0.14);
+}
+
+.appShell[data-theme="light"] .legendDot {
+  box-shadow: 0 0 12px currentColor;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 14px currentColor;
+}
+
+.legendDotX {
+  background: var(--accent-x);
+  color: var(--accent-x);
+}
+
+.legendDotO {
+  background: var(--accent-o);
+  color: var(--accent-o);
+}
+
+@keyframes statusPulse {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 14px 30px rgba(8, 12, 19, 0.18);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.26),
+      0 16px 36px color-mix(in srgb, var(--accent-o) 18%, rgba(8, 12, 19, 0.18));
+  }
+}
+
+@media (max-width: 900px) {
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .brandBlock {
+    max-width: none;
+  }
+
+  .controlGroup {
+    justify-content: flex-start;
+  }
+
+  .sceneFrame {
+    border-radius: 26px;
+  }
+}
+
+@media (max-width: 720px) {
+  .appShell {
+    min-height: 100dvh;
+  }
+
+  .brandBlock h1 {
+    max-width: 12ch;
+  }
+
+  .subtitle {
+    max-width: 32rem;
+  }
+
+  .controlGroup {
+    width: 100%;
+  }
+
+  .controlGroup .uiButton {
+    flex: 1 1 180px;
+  }
+
+  .legend {
+    width: calc(100% - 28px);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 540px) {
+  .appShell {
+    padding: 12px;
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+  }
+
+  .brandBlock h1 {
+    font-size: clamp(1.8rem, 10vw, 3rem);
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .controlGroup {
+    gap: 10px;
+  }
+
+  .controlGroup .uiButton {
+    flex-basis: calc(50% - 5px);
+    padding-inline: 0.9rem;
+  }
+
+  .sceneFrame {
+    border-radius: 20px;
+  }
+
+  .statusWrap {
+    width: calc(100% - 20px);
+  }
+
+  .statusPanel {
+    min-width: 0;
+    width: 100%;
+    padding-inline: 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  .legend {
+    bottom: 10px;
+    width: calc(100% - 20px);
+    padding: 0.72rem 0.85rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .statusWrap {
+    top: 10px;
+    width: calc(100% - 28px);
+  }
+}
+
+@media (max-width: 380px) {
+  .controlGroup .uiButton {
+    flex-basis: 100%;
+  }
+
+  .sceneViewport {
+    min-height: 0;
+  }
+
+  .legend {
+    gap: 10px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .appShell {
+    padding: 30px 34px;
+  }
+
+  .sceneFrame {
+    padding-inline: 28px;
+  }
+
+  .sceneViewport {
+    min-height: 0;
+  }
+}
+
+@media (max-height: 760px) {
+  .appShell {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .subtitle {
+    margin-top: 0.5rem;
+  }
+
+  .sceneViewport {
+    min-height: 0;
+  }
+
+  .legend {
+    bottom: 8px;
+  }
+}
+
+@media (max-height: 640px) {
+  .eyebrow {
+    display: none;
+  }
+
+  .brandBlock h1 {
+    font-size: clamp(1.7rem, 6vw, 2.5rem);
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .statusPanel {
+    padding-top: 0.62rem;
+    padding-bottom: 0.62rem;
+  }
+}
