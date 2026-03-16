@@ -2,7 +2,7 @@ import { useState } from "react";
 import XMark from "./XMark";
 import OMark from "./OMark";
 
-export default function Cell({ index, value, onClick, theme }) {
+export default function Cell({ index, value, onClick, theme, setFocus }) {
   const [hovered, setHovered] = useState(false);
 
   const spacing = 2;
@@ -25,8 +25,14 @@ export default function Cell({ index, value, onClick, theme }) {
 
       {/* Clickable area */}
       <mesh
-        onPointerEnter={() => setHovered(true)}
-        onPointerLeave={() => setHovered(false)}
+        onPointerEnter={() => {
+          setHovered(true);
+          setFocus([x, y]);
+        }}
+        onPointerLeave={() => {
+          setHovered(false);
+          setFocus(null);
+        }}
         onClick={(e) => {
           e.stopPropagation();
           onClick(index);
