@@ -9,14 +9,24 @@ export const winningCombos = [
   [2, 4, 6],
 ];
 
-export function checkWinner(board) {
+export function getGameState(board) {
   for (let combo of winningCombos) {
     const [a, b, c] = combo;
 
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      return board[a];
+      return {
+        winner: board[a],
+        isDraw: false,
+        winningCombo: combo,
+      };
     }
   }
 
-  return null;
+  const isDraw = board.every((cell) => cell !== null);
+
+  return {
+    winner: null,
+    isDraw,
+    winningCombo: null,
+  };
 }
