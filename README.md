@@ -7,7 +7,7 @@
   </div>
 
 ## Project Overview
-ttt-mastermind is a web-based Tic-Tac-Toe game where the player competes against a near-unbeatable AI opponent.
+ttt-mastermind is a web-based Tic-Tac-Toe game where the player competes against a unbeatable AI opponent.
 
 ## Product Vision
 The goal is to create a clean, responsive, and engaging single-player game with a strong AI based on minimax and alpha-beta pruning.
