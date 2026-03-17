@@ -1,5 +1,11 @@
 # ttt-mastermind
 
+<div>
+    <a href="https://ttt-mastermind.vercel.app">
+      <img src="https://img.shields.io/badge/Live_Demo-Visit_Site-success?style=for-the-badge&logo=vercel" alt="Live Demo" />
+    </a>
+  </div>
+
 ## Project Overview
 ttt-mastermind is a web-based Tic-Tac-Toe game where the player competes against a near-unbeatable AI opponent.
 
